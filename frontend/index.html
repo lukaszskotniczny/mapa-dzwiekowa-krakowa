@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapa Dźwiękowa Krakowa</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        h1 {
+            text-align: center;
+            color: white;
+            margin-bottom: 20px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        #map {
+            height: 600px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .info-box {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+        }
+        
+        .modal-content {
+            background: white;
+            margin: 10% auto;
+            padding: 30px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            animation: slideDown 0.3s ease;
+        }
+        
+        @keyframes slideDown {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .close:hover {
+            color: #000;
+        }
+        
+        .modal-content h2 {
+            margin-bottom: 20px;
+            color: #667eea;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .btn-submit {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .btn-submit:hover {
+            transform: scale(1.02);
+        }
+        .stats-panel {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .stat-box {
+            flex: 1;
+            min-width: 200px;
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 48px;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+        
+        .stat-text {
+            font-size: 20px;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 5px;
+            min-height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .stat-label {
+            color: #666;
+            font-size: 14px;
+        }
+        .filter-panel {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .filter-btn {
+            padding: 10px 20px;
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .filter-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .filter-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎵 Mapa Dźwiękowa Krakowa 🗺️</h1>
+        
+        <!-- Panel statystyk -->
+        <div class="stats-panel">
+            <div class="stat-box">
+                <div class="stat-number" id="totalPlaces">0</div>
+                <div class="stat-label">Miejsc muzycznych</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-text" id="topArtist">-</div>
+                <div class="stat-label">Najpopularniejszy artysta</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-text" id="lastAdded">-</div>
+                <div class="stat-label">Ostatnio dodane</div>
+            </div>
+        </div>
+        <div class="filter-panel">
+            <button class="filter-btn active" onclick="filterByCategory('all')">
+                🌍 Wszystkie
+            </button>
+            <button class="filter-btn" onclick="filterByCategory('bieganie')">
+                🏃 Bieganie
+            </button>
+            <button class="filter-btn" onclick="filterByCategory('randka')">
+                ❤️ Randka
+            </button>
+            <button class="filter-btn" onclick="filterByCategory('nostalgiczne')">
+                😌 Nostalgiczne
+            </button>
+            <button class="filter-btn" onclick="filterByCategory('trening')">
+                💪 Trening
+            </button>
+            <button class="filter-btn" onclick="filterByCategory('relaks')">
+                🧘 Relaks
+            </button>
+            <button class="filter-btn" onclick="filterByCategory('impreza')">
+                🎉 Impreza
+            </button>
+            <button class="filter-btn" onclick="filterByCategory('inne')">
+                📌 Inne
+            </button>
+        </div>
+        
+        <div id="map"></div>
+        <div class="info-box">
+            <h3>Jak używać:</h3>
+            <p>Kliknij na mapę, żeby dodać miejsce z Twoją ulubioną muzyką!</p>
+        </div>
+
+        <!-- Modal do dodawania miejsca -->
+        <div id="addPlaceModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>🎵 Dodaj miejsce muzyczne</h2>
+                <form id="addPlaceForm">
+                    <div class="form-group">
+                        <label for="songTitle">Tytuł utworu:</label>
+                        <input type="text" id="songTitle" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="category">Kategoria:</label>
+                        <select id="category" required>
+                            <option value="bieganie">🏃 Bieganie</option>
+                            <option value="randka">❤️ Randka</option>
+                            <option value="nostalgiczne">😌 Nostalgiczne</option>
+                            <option value="trening">💪 Trening/Siłownia</option>
+                            <option value="relaks">🧘 Relaks</option>
+                            <option value="impreza">🎉 Impreza</option>
+                            <option value="inne">📌 Inne</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="artist">Artysta:</label>
+                        <input type="text" id="artist" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Dlaczego to miejsce?</label>
+                        <textarea id="description" rows="3" placeholder="Opcjonalne..."></textarea>
+                    </div>
+                    <button type="submit" class="btn-submit">Dodaj miejsce</button>
+                </form>
+            </div>
+        </div>
+        
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
