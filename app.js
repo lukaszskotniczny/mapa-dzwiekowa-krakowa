@@ -11,6 +11,134 @@ const modal = document.getElementById('addPlaceModal');
 const closeBtn = document.getElementsByClassName('close')[0];
 const form = document.getElementById('addPlaceForm');
 let currentLat, currentLng;
+async function loadPlaces() {
+    try {
+        // Spróbuj załadować z backendu (jeśli działa lokalnie)
+        const response = await fetch('http://localhost:5000/api/places');
+        if (!response.ok) throw new Error('Backend niedostępny');
+        const places = await response.json();
+        
+        allPlaces = places;
+        
+    } catch (error) {
+        console.log('Backend niedostępny - ładowanie przykładowych miejsc');
+        
+        // PRZYKŁADOWE MIEJSCA - tryb demo
+        allPlaces = [
+            {
+                id: 1,
+                lat: 50.0619,
+                lng: 19.9368,
+                songTitle: "Test Song 1",
+                artist: "Test Artist",
+                category: "nostalgiczne",
+                description: "Testowe miejsce 1",
+                spotifyUrl: null,
+                albumImage: null,
+                previewUrl: null
+            },
+            {
+                id: 2,
+                lat: 50.0544,
+                lng: 19.9356,
+                songTitle: "Test Song 2",
+                artist: "Test Artist",
+                category: "bieganie",
+                description: "Testowe miejsce 2",
+                spotifyUrl: null,
+                albumImage: null,
+                previewUrl: null
+            },
+            {
+                id: 3,
+                lat: 50.0537,
+                lng: 19.9370,
+                songTitle: "Test Song 3",
+                artist: "Test Artist",
+                category: "randka",
+                description: "Testowe miejsce 3",
+                spotifyUrl: null,
+                albumImage: null,
+                previewUrl: null
+            },
+            {
+                id: 4,
+                lat: 50.0663,
+                lng: 19.9456,
+                songTitle: "Test Song 4",
+                artist: "Test Artist",
+                category: "trening",
+                description: "Testowe miejsce 4",
+                spotifyUrl: null,
+                albumImage: null,
+                previewUrl: null
+            },
+            {
+                id: 5,
+                lat: 50.0575,
+                lng: 19.9345,
+                songTitle: "Test Song 5",
+                artist: "Test Artist",
+                category: "relaks",
+                description: "Testowe miejsce 5",
+                spotifyUrl: null,
+                albumImage: null,
+                previewUrl: null
+            },
+            {
+                id: 6,
+                lat: 50.0688,
+                lng: 19.9071,
+                songTitle: "Test Song 6",
+                artist: "Test Artist",
+                category: "impreza",
+                description: "Testowe miejsce 6",
+                spotifyUrl: null,
+                albumImage: null,
+                previewUrl: null
+            }
+        ];
+    }
+    
+    // Usuń wszystkie markery
+    markers.forEach(marker => map.removeLayer(marker));
+    markers = [];
+    
+    // Dodaj markery dla wszystkich miejsc
+    allPlaces.forEach(place => {
+        const color = getCategoryColor(place.category);
+        const icon = createColoredIcon(color);
+        
+        const marker = L.marker([place.lat, place.lng], {icon: icon})
+            .addTo(map)
+            .bindPopup(`
+                <div style="min-width: 260px;">
+                    ${place.albumImage ? `<img src="${place.albumImage}" style="width: 100%; border-radius: 8px; margin-bottom: 10px;">` : ''}
+                    
+                    <b style="font-size: 16px;">${place.songTitle}</b><br>
+                    <i style="color: #666;">${place.artist}</i><br>
+                    
+                    <span style="background: ${color}; color: white; padding: 3px 8px; 
+                          border-radius: 5px; font-size: 12px; display: inline-block; 
+                          margin-top: 5px; margin-bottom: 8px;">${getCategoryIcon(place.category)} ${place.category}</span>
+                    
+                    <p style="margin-top: 8px; margin-bottom: 10px;">${place.description}</p>
+                    
+                    ${place.spotifyUrl ? `
+                        <a href="${place.spotifyUrl}" target="_blank" 
+                           style="display: inline-block; background: #1DB954; color: white; 
+                                  padding: 8px 15px; border-radius: 5px; text-decoration: none; 
+                                  font-weight: bold; font-size: 14px; margin-bottom: 8px;">
+                            🎵 Otwórz w Spotify
+                        </a>
+                    ` : ''}
+                </div>
+            `);
+        markers.push(marker);
+    });
+    
+    updateStats(allPlaces);
+}
 
 function getCategoryColor(category) {
     const colors = {
