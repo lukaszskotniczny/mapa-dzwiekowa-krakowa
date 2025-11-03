@@ -3,6 +3,26 @@ const map = L.map('map', {
     attributionControl: false  // Wyłącz kontrolkę attribution
 }).setView([50.0614, 19.9366], 13);
 
+// DODAJ WARSTWY OD RAZU NA POCZĄTKU
+const lightLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '',
+    maxZoom: 19
+});
+
+const darkLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    attribution: '',
+    maxZoom: 19
+});
+
+// Sprawdź zapisany motyw PRZED inicjalizacją
+const savedTheme = localStorage.getItem('theme');
+if (savedTheme === 'dark') {
+    darkLayer.addTo(map);
+    document.body.classList.add('dark-mode');
+} else {
+    lightLayer.addTo(map);
+}
+
 let markers = [];
 let allPlaces = [];
 let currentFilter = 'all';
@@ -52,7 +72,7 @@ function getCategoryIcon(category) {
     return icons[category] || '📌';
 }
 
-async function loadPlaces() {
+function loadPlaces() {
     console.log('=== START loadPlaces() ===');
     
     // PRZYKŁADOWE MIEJSCA - zawsze załaduj (tryb demo)
@@ -237,8 +257,6 @@ window.onclick = function(event) {
         form.reset();
     }
 }
-    
-
 
 form.onsubmit = function(e) {
     e.preventDefault();
@@ -321,6 +339,7 @@ function updateStats(places) {
     }
     updateFilterCounts(places);
 }
+
 function updateFilterCounts(places) {
     const categoryCount = {};
     
@@ -468,53 +487,33 @@ function escapeHtml(text) {
     return div.innerHTML.replace(/'/g, '\\\'');
 }
 
-loadPlaces();
+// Przełącznik motywu
 const themeToggle = document.getElementById('themeToggle');
 const themeIcon = document.querySelector('.theme-icon');
 
-// Sprawdź zapisany motyw w localStorage
-const savedTheme = localStorage.getItem('theme');
+// Ustaw ikonę trybu
 if (savedTheme === 'dark') {
-    document.body.classList.add('dark-mode');
     themeIcon.textContent = '☀️';
-}
-
-// Przełącznik motywu
-const lightLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '',
-    maxZoom: 19
-});
-
-const darkLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-    attribution: '',
-    maxZoom: 19
-});
-
-// Ustaw domyślną warstwę
-if (savedTheme === 'dark') {
-    darkLayer.addTo(map);
 } else {
-    lightLayer.addTo(map);
+    themeIcon.textContent = '🌙';
 }
 
-// Przełącznik motywu
 themeToggle.addEventListener('click', function() {
     document.body.classList.toggle('dark-mode');
     
     if (document.body.classList.contains('dark-mode')) {
         themeIcon.textContent = '☀️';
         localStorage.setItem('theme', 'dark');
-        // Zmień mapę na ciemną
         map.removeLayer(lightLayer);
         darkLayer.addTo(map);
     } else {
         themeIcon.textContent = '🌙';
         localStorage.setItem('theme', 'light');
-        // Zmień mapę na jasną
         map.removeLayer(darkLayer);
         lightLayer.addTo(map);
     }
 });
+
 // ===== WYSZUKIWARKA MIEJSC =====
 
 const placeSearchInput = document.getElementById('placeSearch');
@@ -525,7 +524,6 @@ placeSearchInput.addEventListener('input', function(e) {
     const query = e.target.value.trim().toLowerCase();
     
     if (query.length === 0) {
-        // Pokaż wszystkie miejsca
         loadPlaces();
         return;
     }
@@ -537,7 +535,6 @@ placeSearchInput.addEventListener('input', function(e) {
             place.description.toLowerCase().includes(query)
         );
         
-        // Usuń wszystkie markery
         markers.forEach(marker => map.removeLayer(marker));
         markers = [];
         
@@ -546,7 +543,6 @@ placeSearchInput.addEventListener('input', function(e) {
             return;
         }
         
-        // Dodaj tylko znalezione markery
         filteredPlaces.forEach(place => {
             const color = getCategoryColor(place.category);
             const icon = createColoredIcon(color);
@@ -592,7 +588,6 @@ placeSearchInput.addEventListener('input', function(e) {
             markers.push(marker);
         });
         
-        // Wycentruj mapę na znalezionych miejscach
         if (filteredPlaces.length === 1) {
             map.flyTo([filteredPlaces[0].lat, filteredPlaces[0].lng], 15, {duration: 1});
         } else {
@@ -606,27 +601,21 @@ placeSearchInput.addEventListener('input', function(e) {
 
 // ===== LOSOWE MIEJSCE =====
 
-
-
 function randomPlace() {
     if (allPlaces.length === 0) {
         alert('Brak miejsc na mapie!');
         return;
     }
     
-    // Pokaż modal z kostką
     const diceModal = document.getElementById('diceModal');
     diceModal.classList.add('show');
     
-    // Poczekaj na animację (2 sekundy)
     setTimeout(() => {
         const randomIndex = Math.floor(Math.random() * allPlaces.length);
         const place = allPlaces[randomIndex];
         
-        // Ukryj modal
         diceModal.classList.remove('show');
         
-        // Przesuń do miejsca i otwórz popup
         map.flyTo([place.lat, place.lng], 16, {
             duration: 1.5,
             easeLinearity: 0.5
@@ -649,6 +638,7 @@ function randomPlace() {
         }, 1500);
     }, 2000);
 }
+
 // ===== TOAST NOTIFICATIONS =====
 
 function showToast(message, icon = '✅', duration = 3000) {
@@ -665,6 +655,6 @@ function showToast(message, icon = '✅', duration = 3000) {
         toast.classList.remove('show');
     }, duration);
 }
+
+// ZAŁADUJ MIEJSCA NA KOŃCU
 loadPlaces();
-    
-    
