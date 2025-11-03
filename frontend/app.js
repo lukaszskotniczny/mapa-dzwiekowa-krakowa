@@ -54,7 +54,9 @@ function getCategoryIcon(category) {
 
 async function loadPlaces() {
     try {
+        // Spróbuj załadować z backendu (jeśli działa lokalnie)
         const response = await fetch('http://localhost:5000/api/places');
+        if (!response.ok) throw new Error('Backend niedostępny');
         const places = await response.json();
         
         allPlaces = places;
@@ -109,11 +111,11 @@ async function loadPlaces() {
         
         updateStats(places);
         
-    } catch (error) {
-        console.error('Błąd pobierania miejsc:', error);
+   } catch (error) {
+        console.log('Backend niedostępny - tryb demo');
+        allPlaces = [];
+        updateStats([]);
     }
-
-
 }
 
 async function addPlace(lat, lng, songTitle, artist, category, description, spotifyUrl, albumImage, previewUrl) {
