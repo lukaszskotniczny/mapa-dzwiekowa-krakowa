@@ -1,75 +1,130 @@
-﻿#  Mapify
+# Mapify
 
-Interaktywna aplikacja webowa do zapisywania i odkrywania miejsc połączonych z muzyką. Każde miejsce ma przypisany utwór z Spotify, kategorię wspomnień i społeczność komentujących.
-
+**Interaktywna aplikacja webowa do zapisywania i odkrywania miejsc połączonych z muzyką.** Każde miejsce ma przypisany utwór z Spotify, kategorię wspomnień oraz możliwość dodawania komentarzy i polubieniów przez społeczność.
 ![Mapify](screenshot.png)
+**Live Demo:** https://lukaszskotniczny.github.io/Mapify/
 
- **[Live Demo](https://lukaszskotniczny.github.io/Mapify/)**
+## Funkcjonalności
 
-##  Funkcjonalności
+### Interaktywna Mapa
+- Leaflet.js z kolorowymi markerami według kategorii
+- Tryb nocny i jasny z automatycznym przełączaniem warstw mapy
+- Animacje przy dodawaniu nowych miejsc
+- Pełna responsywność - działa na komputerach, tabletach i smartfonach
+- Dodawanie miejsc przez podwójne kliknięcie
 
-###  Interaktywna Mapa
-- **Leaflet.js** z kolorowymi markerami według kategorii
-- **Tryb nocny/jasny** - przełączanie motywu z ciemną mapą
-- **Animacje** przy dodawaniu nowych miejsc z pulsującymi markerami
-- **Responsywność** - działa świetnie na telefonie, tablecie i desktopie
-- **Double-click** do dodawania nowych miejsc
-
-###  Integracja Spotify
-- **Wyszukiwarka utworów** z API Spotify
+### Integracja Spotify
+- Wyszukiwarka utworów z API Spotify
 - Podgląd okładek albumów
-- Linki bezpośrednie do utworów w Spotify
-- Preview audio (jeśli dostępne)
+- Bezpośrednie linki do utworów
+- Preview audio
 
-###  Wyszukiwanie i Filtrowanie
-- **Wyszukiwarka miejsc** - szukaj po tytule, artyście lub opisie
-- **Filtry kategorii** z licznikami miejsc
-- **Losowe miejsce**  - animowana kostka losuje miejsce na mapie
+### Wyszukiwanie i Filtrowanie
+- Wyszukiwarka miejsc po tytule, artyście lub opisie
+- Filtry kategorii z dynamicznymi licznikami
+- Funkcja losowania miejsc z animacją
 - Kategorie: Bieganie, Randka, Nostalgiczne, Trening, Relaks, Impreza, Inne
 
-###  Social Features (Supabase)
-- **Polubienia miejsc**  - współdzielone między wszystkimi użytkownikami
-- **System komentarzy** - dodawaj wspomnienia i opinie
-- **Realtime synchronizacja** - dane aktualizują się na żywo
-- Unikalne ID użytkownika (localStorage)
+### Social Features
+- System polubieniów współdzielony między użytkownikami
+- Komentarze z datą i imieniem autora
+- Realtime synchronizacja przez Supabase
+- Unikalne ID użytkownika przechowywane w localStorage
 
-###  Statystyki
+### Statystyki
 - Liczba wszystkich miejsc na mapie
 - Top 5 najczęściej używanych artystów
 - Najpopularniejsza kategoria wspomnień
-- Dynamiczne liczniki na filtrach
+- Dynamiczne liczniki przy filtrach
 
-###  UX/UI
-- **Animowany splash screen** z tańczącymi nutkami 
-- **Toast notifications** - powiadomienia o działaniach
+### UI/UX
+- Animowany ekran powitalny
+- System powiadomień toast
 - Płynne animacje i przejścia
-- Intuicyjny interfejs
-- Gradient backgrounds
+- Intuicyjny interfejs użytkownika
 
-##  Stack Technologiczny
+## Stack Technologiczny
 
 ### Backend
-- **Python 3.11+**
-- **Flask** - framework webowy
-- **SQLAlchemy** - ORM do bazy danych
-- **SQLite** - baza danych lokalna
-- **Spotipy** - Python client dla Spotify API
+- Python 3.11+
+- Flask - framework webowy
+- SQLAlchemy - ORM
+- SQLite - lokalna baza danych
+- Spotipy - klient Spotify API
 
 ### Frontend
-- **HTML5/CSS3** - struktura i style
-- **JavaScript (ES6+)** - logika aplikacji
-- **Leaflet.js** - interaktywne mapy
-- **Spotify Web API** - wyszukiwarka utworów
+- HTML5/CSS3
+- JavaScript (ES6+)
+- Leaflet.js - biblioteka map
+- Spotify Web API
 
-### Cloud Services
-- **Supabase** - PostgreSQL database dla social features
-- **GitHub Pages** - hosting frontendu
+### Cloud
+- Supabase - PostgreSQL database dla funkcji społecznościowych
+- GitHub Pages - hosting frontendu
 
-##  Instalacja i Uruchomienie
+## Instalacja i Uruchomienie
 
 ### Wymagania
-- Python 3.8+
+- Python 3.8 lub nowszy
 - Konto Spotify Developer (darmowe)
-- Nowoczesna przeglądarka (Chrome, Firefox, Edge)
+- Nowoczesna przeglądarka internetowa
 
+### Backend (opcjonalnie)
+```bash
+cd backend
+pip install -r requirements.txt
+python app.py
+```
 
+Backend uruchomi się na `http://localhost:5000`
+
+### Frontend
+
+Otwórz plik `index.html` w przeglądarce lub użyj Live Server w VS Code.
+
+**Uwaga:** Funkcje społecznościowe działają z Supabase bez potrzeby uruchamiania backendu lokalnie.
+
+## Kategorie Miejsc
+
+- **Bieganie** - miejsca związane z aktywnością fizyczną
+- **Randka** - romantyczne miejsca
+- **Nostalgiczne** - miejsca pełne wspomnień
+- **Trening** - miejsca treningowe i siłownie
+- **Relaks** - miejsca do odpoczynku
+- **Impreza** - miejsca imprezowe
+- **Inne** - pozostałe kategorie
+
+## Responsywność
+
+Aplikacja jest w pełni responsywna i działa na:
+- Desktop (1920px+)
+- Laptop (1366px+)
+- Tablet (768px+)
+- Smartfon (320px+)
+
+## Wersje Aplikacji
+
+### Online (GitHub Pages)
+- Demo z przykładowymi miejscami
+- Pełna funkcjonalność UI
+- Aktywne social features (polubienia, komentarze)
+- Brak możliwości dodawania nowych miejsc
+
+### Lokalna (z backendem)
+- Pełna funkcjonalność
+- Dodawanie miejsc przez Spotify API
+- Edycja i usuwanie miejsc
+- Wszystkie funkcje social
+- 
+## Autor
+
+**Łukasz Skotniczny**  
+
+GitHub: [@lukaszskotniczny](https://github.com/lukaszskotniczny)
+
+## Licencja
+
+MIT License
+
+**Live Demo:** https://lukaszskotniczny.github.io/Mapify/  
+**Repozytorium:** https://github.com/lukaszskotniczny/mapify
