@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mapa Dźwiękowa Krakowa</title>
+    <title>Mapify</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
         * {
@@ -860,7 +860,24 @@
                 font-size: 25px;
             }
         }
+        .dark-mode .spotify-result-title {
+            color: #fff;
+        }
+        
+        .dark-mode .spotify-result-artist {
+            color: #ccc;
+        }
+        
+        .dark-mode .spotify-results {
+            background: #2d2d2d;
+            border-color: #444;
+        }
+        
+        .dark-mode .spotify-result-item:hover {
+            background: #3d3d3d;
+        }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
     <div id="splashScreen" class="splash-screen">
@@ -872,11 +889,11 @@
             <span class="note note5">🎵</span>
             <span class="note note6">🎶</span>
         </div>
-        <h1 class="splash-title"> Mapa Dźwiękowa Krakowa </h1>
+        <h1 class="splash-title"> Mapify </h1>
     </div>
     <div class="container">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-            <h1 style="margin: 0;"> Mapa Dźwiękowa Krakowa </h1>
+            <h1 style="margin: 0;"> Mapify </h1>
             <button id="themeToggle" class="theme-toggle">
                 <span class="theme-icon">🌙</span>
             </button>
@@ -950,7 +967,7 @@
         <div id="map"></div>
         <div class="info-box">
             <h3>Jak używać:</h3>
-            <p>Kliknij na mapę, żeby dodać miejsce z Twoją ulubioną muzyką!</p>
+            <p>Kliknij dwukrotnie na mapę, żeby dodać miejsce z Twoją ulubioną muzyką!</p>
         </div>
 
        <!-- Modal do dodawania miejsca -->

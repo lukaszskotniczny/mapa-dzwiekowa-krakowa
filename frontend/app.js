@@ -53,7 +53,9 @@ function getCategoryIcon(category) {
 }
 
 async function loadPlaces() {
+    console.log('=== START loadPlaces() ===');
     try {
+        console.log('Próba połączenia z backendem...');
         // Spróbuj załadować z backendu (jeśli działa lokalnie)
         const response = await fetch('http://localhost:5000/api/places');
         if (!response.ok) throw new Error('Backend niedostępny');
@@ -112,11 +114,16 @@ async function loadPlaces() {
         updateStats(places);
         
    } catch (error) {
+    console.log('=== CATCH - Backend niedostępny ===');
+    console.log('Error:', error);
         console.log('Backend niedostępny - tryb demo');
         allPlaces = [];
         updateStats([]);
     }
+     updateStats(allPlaces);
+    console.log('=== KONIEC loadPlaces(), allPlaces.length:', allPlaces.length); // ← DODAJ
 }
+
 
 async function addPlace(lat, lng, songTitle, artist, category, description, spotifyUrl, albumImage, previewUrl) {
     try {
@@ -619,5 +626,6 @@ function showToast(message, icon = '✅', duration = 3000) {
         toast.classList.remove('show');
     }, duration);
 }
+loadPlaces();
     
     
